@@ -1,0 +1,2 @@
+[1m[31mERROR   [0m LoginPage:utils.py:25 Loggin Failed!
+[1m[31mERROR   [0m AppValidation:utils.py:25 Login Faild

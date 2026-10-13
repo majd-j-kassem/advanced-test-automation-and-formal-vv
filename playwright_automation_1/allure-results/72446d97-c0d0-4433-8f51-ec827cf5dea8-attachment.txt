@@ -1,0 +1,1 @@
+[31m[1mERROR   [0m LoginPage:utils.py:25 Failed executing action: navigate_to with arguments: ('',)

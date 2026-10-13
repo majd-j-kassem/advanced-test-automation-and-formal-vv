@@ -1,27 +1,42 @@
-import logger
-import pytest
-from playwright_automation_1.helper.config import URL
-from playwright_automation_1.helper.utils import log_level, log_message
-from playwright_automation_1.page_objects.login_page import LoginPage
+import logging
 
+import pytest
+from helper.config import URL
+from helper.validation import AppValidation
+from helper.utils import LogLevel, log_message
+from page_objects.login_page import LoginPage
+from page_objects.main_page import MainPage
+
+
+logger = logging.getLogger(__name__)
 
 @pytest.fixture
 def setup_playwright(playwright, request):
-    headed = request.config.getoption("--headed", default = False)
-    browser = playwright.chromium.launch(headless = not headed)
+    headed = request.config.getoption("--headed", default=False)
+    browser = playwright.chromium.launch(headless=not headed)
     page = browser.new_page()
 
     try:
         yield page
 
     finally:
-        log_message(logger, message = "Closing the browser", log_level = log_level.INFO)
+        log_message(logger, message="Closing the browser", level=LogLevel.INFO)
         browser.close()
 
+
 @pytest.fixture
-def setup_page(setup_playwright):
+def setup_load_page(setup_playwright):
     login_page = LoginPage(setup_playwright)
     login_page.navigate_to(URL)
-    log_message(logger, message = f"Navigating to the {URL}", log_level = log_level.INFO)
+    log_message(logger, message=f"Navigating to the {URL}", level=LogLevel.INFO)
     yield login_page
-    
+
+@pytest.fixture
+def setup_all_pages(setup_playwright):
+    login_page = LoginPage(setup_playwright)
+    main_page = MainPage(setup_playwright)
+
+    yield login_page, main_page
+@pytest.fixture
+def validation(setup_all_pages):
+    yield AppValidation(setup_all_pages)
